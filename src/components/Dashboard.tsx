@@ -164,16 +164,16 @@ export default function Dashboard() {
 
   const getLogIcon = (type: string) => {
     switch (type) {
-      case 'system': return <Server className="w-4 h-4 text-gray-500" />;
-      case 'action': return <Activity className="w-4 h-4 text-green-500" />;
-      case 'voice': return <Mic className="w-4 h-4 text-[#6D5EF5]" />;
-      case 'error': return <AlertCircle className="w-4 h-4 text-red-500" />;
-      default: return <List className="w-4 h-4 text-gray-500" />;
+      case 'system': return <Server className="w-4 h-4 text-gray-400" />;
+      case 'action': return <Activity className="w-4 h-4 text-green-400" />;
+      case 'voice': return <Mic className="w-4 h-4 text-[#8A7EF7]" />;
+      case 'error': return <AlertCircle className="w-4 h-4 text-red-400" />;
+      default: return <List className="w-4 h-4 text-gray-400" />;
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
+    <div className="flex flex-col min-h-screen bg-amber-50 font-sans">
       
       {/* HEADER / NAVIGATION BAR (BLACK) */}
       <header className="sticky top-0 z-50 w-full bg-gray-900 shadow-md">
@@ -385,20 +385,20 @@ export default function Dashboard() {
 
             {/* RIGHT COLUMN: Activity Log */}
             <div className="md:col-span-4">
-              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col h-[600px] xl:sticky xl:top-24">
-                <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-t-3xl">
-                  <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <div className="bg-gray-900 rounded-3xl shadow-sm border border-gray-800 flex flex-col h-[600px] xl:sticky xl:top-24">
+                <div className="p-6 border-b border-gray-800 flex items-center justify-between bg-gray-950/50 rounded-t-3xl">
+                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
                     <List className="w-5 h-5 text-[#6D5EF5]" />
                     Log Aktivitas
                   </h2>
-                  <span className="text-xs font-medium bg-gray-200 text-gray-600 px-2 py-1 rounded-full">
+                  <span className="text-xs font-medium bg-gray-800 text-gray-300 border border-gray-700 px-2 py-1 rounded-full">
                     {logs.length} events
                   </span>
                 </div>
                 
                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
                   {logs.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center text-gray-400 space-y-3">
+                    <div className="h-full flex flex-col items-center justify-center text-center text-gray-500 space-y-3">
                       <Activity className="w-8 h-8 opacity-50" />
                       <p className="text-sm">Belum ada aktivitas yang tercatat</p>
                     </div>
@@ -409,8 +409,8 @@ export default function Dashboard() {
                           {getLogIcon(log.type)}
                         </div>
                         <div>
-                          <p className="text-gray-900 leading-tight">{log.message}</p>
-                          <p className="text-xs text-gray-400 mt-1">
+                          <p className="text-gray-100 leading-tight">{log.message}</p>
+                          <p className="text-xs text-gray-500 mt-1">
                             {log.timestamp.toLocaleTimeString('id-ID', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                           </p>
                         </div>
