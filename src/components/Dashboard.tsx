@@ -6,6 +6,23 @@ import {
 import { useVoice } from '../hooks/useVoice';
 import type { SystemState, LogEntry } from '../types';
 
+const TELEGRAM_BOT_TOKEN = "8899164383:AAHafqZnopae73eJz6FpKk6GNrnJ3RBXA0U";
+const TELEGRAM_CHAT_ID = "1725103948";
+
+const sendTelegramNotif = async (message: string) => {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message })
+    });
+  } catch (err) {
+    console.error('Gagal kirim notif telegram', err);
+  }
+};
+
 export default function Dashboard() {
   const [ipAddress, setIpAddress] = useState<string>('');
   const [isConfigured, setIsConfigured] = useState(false);
@@ -73,7 +90,7 @@ export default function Dashboard() {
     };
   }, [ipAddress, isConfigured, fetchSync]);
 
-  const sendCommand = async (path: string, successMsg: string) => {
+  const sendCommand = async (path: string, successMsg: string, isVoice = false) => {
     if (!ipAddress) {
       addLog('IP Address ESP32 belum diatur', 'error');
       return;
@@ -83,8 +100,9 @@ export default function Dashboard() {
     try {
       const res = await fetch(url);
       if (res.ok) {
-        addLog(successMsg, 'action');
+        addLog(successMsg, isVoice ? 'voice' : 'action');
         fetchSync(); // immediately refresh state
+        sendTelegramNotif(`🌐 [WEB] ${successMsg}`);
       } else {
         addLog(`Gagal perintah: HTTP ${res.status}`, 'error');
       }
@@ -98,50 +116,50 @@ export default function Dashboard() {
     const lowerCmd = text.toLowerCase();
     let matched = false;
 
-    const isOn = lowerCmd.includes('nyala') || lowerCmd.includes('hidup') || lowerCmd.includes('on') || lowerCmd.includes('satu') || lowerCmd.includes('dua');
+    const isOn = lowerCmd.includes('nyala') || lowerCmd.includes('hidup') || lowerCmd.includes('on');
     const isOff = lowerCmd.includes('mati') || lowerCmd.includes('off') || lowerCmd.includes('stop') || lowerCmd.includes('berhenti');
 
     if (isOn) {
       if (lowerCmd.includes('variasi 1') || lowerCmd.includes('variasi satu')) {
-        sendCommand('/variasi?mode=1', 'Variasi 1 Aktif (Voice)');
+        sendCommand('/variasi?mode=1', 'Variasi 1 Aktif (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('variasi 2') || lowerCmd.includes('variasi dua')) {
-        sendCommand('/variasi?mode=2', 'Variasi 2 Aktif (Voice)');
+        sendCommand('/variasi?mode=2', 'Variasi 2 Aktif (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('semua')) {
-        sendCommand('/all?state=on', 'Semua Lampu Nyala (Voice)');
+        sendCommand('/all?state=on', 'Semua Lampu Nyala (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('satu') || lowerCmd.includes('1')) {
-        sendCommand('/relay?id=1&state=on', 'Lampu 1 Nyala (Voice)');
+        sendCommand('/relay?id=1&state=on', 'Lampu 1 Nyala (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('dua') || lowerCmd.includes('2')) {
-        sendCommand('/relay?id=2&state=on', 'Lampu 2 Nyala (Voice)');
+        sendCommand('/relay?id=2&state=on', 'Lampu 2 Nyala (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('tiga') || lowerCmd.includes('3')) {
-        sendCommand('/relay?id=3&state=on', 'Lampu 3 Nyala (Voice)');
+        sendCommand('/relay?id=3&state=on', 'Lampu 3 Nyala (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('empat') || lowerCmd.includes('4')) {
-        sendCommand('/relay?id=4&state=on', 'Lampu 4 Nyala (Voice)');
+        sendCommand('/relay?id=4&state=on', 'Lampu 4 Nyala (Voice)', true);
         matched = true;
       }
     } else if (isOff) {
       if (lowerCmd.includes('variasi') || lowerCmd.includes('stop') || lowerCmd.includes('berhenti')) {
-        sendCommand('/stop', 'Variasi Dihentikan (Voice)');
+        sendCommand('/stop', 'Variasi Dihentikan (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('semua')) {
-        sendCommand('/all?state=off', 'Semua Lampu Mati (Voice)');
+        sendCommand('/all?state=off', 'Semua Lampu Mati (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('satu') || lowerCmd.includes('1')) {
-        sendCommand('/relay?id=1&state=off', 'Lampu 1 Mati (Voice)');
+        sendCommand('/relay?id=1&state=off', 'Lampu 1 Mati (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('dua') || lowerCmd.includes('2')) {
-        sendCommand('/relay?id=2&state=off', 'Lampu 2 Mati (Voice)');
+        sendCommand('/relay?id=2&state=off', 'Lampu 2 Mati (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('tiga') || lowerCmd.includes('3')) {
-        sendCommand('/relay?id=3&state=off', 'Lampu 3 Mati (Voice)');
+        sendCommand('/relay?id=3&state=off', 'Lampu 3 Mati (Voice)', true);
         matched = true;
       } else if (lowerCmd.includes('empat') || lowerCmd.includes('4')) {
-        sendCommand('/relay?id=4&state=off', 'Lampu 4 Mati (Voice)');
+        sendCommand('/relay?id=4&state=off', 'Lampu 4 Mati (Voice)', true);
         matched = true;
       }
     }
