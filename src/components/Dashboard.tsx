@@ -112,60 +112,66 @@ export default function Dashboard() {
   };
 
   const parseVoiceCommand = useCallback((text: string) => {
-    addLog(`Suara terdeteksi: "${text}"`, 'voice');
+    addLog(`Mendengar: "${text}"`, 'voice');
     const lowerCmd = text.toLowerCase();
     let matched = false;
 
-    const isOn = lowerCmd.includes('nyala') || lowerCmd.includes('hidup') || lowerCmd.includes('on');
-    const isOff = lowerCmd.includes('mati') || lowerCmd.includes('off') || lowerCmd.includes('stop') || lowerCmd.includes('berhenti');
-
-    if (isOn) {
-      if (lowerCmd.includes('variasi 1') || lowerCmd.includes('variasi satu')) {
+    if ((lowerCmd.includes('variasi') || lowerCmd.includes('pola')) && !lowerCmd.includes('stop') && !lowerCmd.includes('berhenti') && !lowerCmd.includes('mati')) {
+      if (lowerCmd.includes('1') || lowerCmd.includes('satu') || lowerCmd.includes('running')) {
         sendCommand('/variasi?mode=1', 'Variasi 1 Aktif (Voice)', true);
         matched = true;
-      } else if (lowerCmd.includes('variasi 2') || lowerCmd.includes('variasi dua')) {
+      } else if (lowerCmd.includes('2') || lowerCmd.includes('dua') || lowerCmd.includes('bolak')) {
         sendCommand('/variasi?mode=2', 'Variasi 2 Aktif (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('semua')) {
-        sendCommand('/all?state=on', 'Semua Lampu Nyala (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('satu') || lowerCmd.includes('1')) {
-        sendCommand('/relay?id=1&state=on', 'Lampu 1 Nyala (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('dua') || lowerCmd.includes('2')) {
-        sendCommand('/relay?id=2&state=on', 'Lampu 2 Nyala (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('tiga') || lowerCmd.includes('3')) {
-        sendCommand('/relay?id=3&state=on', 'Lampu 3 Nyala (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('empat') || lowerCmd.includes('4')) {
-        sendCommand('/relay?id=4&state=on', 'Lampu 4 Nyala (Voice)', true);
-        matched = true;
-      }
-    } else if (isOff) {
-      if (lowerCmd.includes('variasi') || lowerCmd.includes('stop') || lowerCmd.includes('berhenti')) {
-        sendCommand('/stop', 'Variasi Dihentikan (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('semua')) {
-        sendCommand('/all?state=off', 'Semua Lampu Mati (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('satu') || lowerCmd.includes('1')) {
-        sendCommand('/relay?id=1&state=off', 'Lampu 1 Mati (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('dua') || lowerCmd.includes('2')) {
-        sendCommand('/relay?id=2&state=off', 'Lampu 2 Mati (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('tiga') || lowerCmd.includes('3')) {
-        sendCommand('/relay?id=3&state=off', 'Lampu 3 Mati (Voice)', true);
-        matched = true;
-      } else if (lowerCmd.includes('empat') || lowerCmd.includes('4')) {
-        sendCommand('/relay?id=4&state=off', 'Lampu 4 Mati (Voice)', true);
         matched = true;
       }
     }
 
     if (!matched) {
-      addLog(`Perintah suara tidak dikenali`, 'error');
+      const isOn = lowerCmd.includes('nyala') || lowerCmd.includes('hidup') || lowerCmd.includes('on') || lowerCmd.includes('aktif');
+      const isOff = lowerCmd.includes('mati') || lowerCmd.includes('off') || lowerCmd.includes('stop') || lowerCmd.includes('berhenti');
+  
+      if (isOn) {
+        if (lowerCmd.includes('semua')) {
+          sendCommand('/all?state=on', 'Semua Lampu Nyala (Voice)', true);
+          matched = true;
+        } else if (lowerCmd.includes('satu') || lowerCmd.includes('1')) {
+          sendCommand('/relay?id=1&state=on', 'Lampu 1 Nyala (Voice)', true);
+          matched = true;
+        } else if (lowerCmd.includes('dua') || lowerCmd.includes('2')) {
+          sendCommand('/relay?id=2&state=on', 'Lampu 2 Nyala (Voice)', true);
+          matched = true;
+        } else if (lowerCmd.includes('tiga') || lowerCmd.includes('3')) {
+          sendCommand('/relay?id=3&state=on', 'Lampu 3 Nyala (Voice)', true);
+          matched = true;
+        } else if (lowerCmd.includes('empat') || lowerCmd.includes('4')) {
+          sendCommand('/relay?id=4&state=on', 'Lampu 4 Nyala (Voice)', true);
+          matched = true;
+        }
+      } else if (isOff) {
+        if (lowerCmd.includes('variasi') || lowerCmd.includes('stop') || lowerCmd.includes('berhenti')) {
+          sendCommand('/stop', 'Variasi Dihentikan (Voice)', true);
+          matched = true;
+        } else if (lowerCmd.includes('semua')) {
+          sendCommand('/all?state=off', 'Semua Lampu Mati (Voice)', true);
+          matched = true;
+        } else if (lowerCmd.includes('satu') || lowerCmd.includes('1')) {
+          sendCommand('/relay?id=1&state=off', 'Lampu 1 Mati (Voice)', true);
+          matched = true;
+        } else if (lowerCmd.includes('dua') || lowerCmd.includes('2')) {
+          sendCommand('/relay?id=2&state=off', 'Lampu 2 Mati (Voice)', true);
+          matched = true;
+        } else if (lowerCmd.includes('tiga') || lowerCmd.includes('3')) {
+          sendCommand('/relay?id=3&state=off', 'Lampu 3 Mati (Voice)', true);
+          matched = true;
+        } else if (lowerCmd.includes('empat') || lowerCmd.includes('4')) {
+          sendCommand('/relay?id=4&state=off', 'Lampu 4 Mati (Voice)', true);
+          matched = true;
+        }
+      }
+    }
+
+    if (!matched) {
+      addLog(`Maaf, tidak mengerti perintah: "${text}"`, 'error');
     }
   }, [ipAddress, addLog]); // Dependencies
 
